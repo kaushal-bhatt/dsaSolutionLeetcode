@@ -1,0 +1,833 @@
+url: https://leetcode.com/problems/reverse-words-in-a-string/description
+problem: 
+Given an input string s, reverse the order of the words.
+
+A word is defined as a sequence of non-space characters. The words in s will be separated by at least one space.
+
+Return a string of the words in reverse order concatenated by a single space.
+
+Note that s may contain leading or trailing spaces or multiple spaces between two words. The returned string should only have a single space separating the words. Do not include any extra spaces.
+
+ 
+
+Example 1:
+
+Input: s = "the sky is blue"
+Output: "blue is sky the"
+Example 2:
+
+Input: s = "  hello world  "
+Output: "world hello"
+Explanation: Your reversed string should not contain leading or trailing spaces.
+Example 3:
+
+Input: s = "a good   example"
+Output: "example good a"
+Explanation: You need to reduce multiple spaces between two words to a single space in the reversed string.
+ 
+
+Constraints:
+
+1 <= s.length <= 104
+s contains English letters (upper-case and lower-case), digits, and spaces ' '.
+There is at least one word in s.
+ 
+
+Follow-up: If the string data type is mutable in your language, can you solve it in-place with O(1) extra space?
+
+solution:
+class Solution {
+    public String reverseWords(String s) {
+         s = s.trim(); 
+
+        // Split into words by splitting on one or more spaces
+        String[] words = s.split("\\s+");
+
+        // Reverse the words
+        StringBuilder reversed = new StringBuilder();
+        for (int i = words.length - 1; i >= 0; i--) {
+            reversed.append(words[i]).append(" ");
+        }
+
+        // Remove extra trailing space at the end, then return
+        return reversed.toString().trim(); 
+    
+    }
+}
+
+##############################################
+
+url:https://leetcode.com/problems/swapping-nodes-in-a-linked-list/description/
+problem:
+you are given the head of a linked list, and an integer k.
+
+Return the head of the linked list after swapping the values of the kth node from the beginning and the kth node from the end (the list is 1-indexed).
+
+ 
+
+Example 1:
+
+
+Input: head = [1,2,3,4,5], k = 2
+Output: [1,4,3,2,5]
+Example 2:
+
+Input: head = [7,9,6,6,7,8,3,0,9,5], k = 5
+Output: [7,9,6,6,8,7,3,0,9,5]
+ 
+
+Constraints:
+
+The number of nodes in the list is n.
+1 <= k <= n <= 105
+0 <= Node.val <= 100
+
+solution: /**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode() {}
+ *     ListNode(int val) { this.val = val; }
+ *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
+ * }
+ */
+class Solution {
+    public ListNode swapNodes(ListNode head, int k) {
+        ListNode fast = head;
+        ListNode slow = head;
+        ListNode first = null; // Will store the kth node from the beginning
+
+        // Advance 'fast' k-1 nodes ahead
+        for (int i = 0; i < k - 1; i++) {
+            fast = fast.next;
+        }
+
+        first = fast; // Store the kth node
+
+        // Move 'fast' to the end and 'slow' to the kth node from the end
+        while (fast.next != null) {
+            slow = slow.next;
+            fast = fast.next;
+        }
+
+        // Swap values of 'first' and 'slow' 
+        int temp = first.val;
+        first.val = slow.val;
+        slow.val = temp;
+
+        return head;
+    }
+}
+
+
+####################################################################
+url:https://leetcode.com/problems/sort-colors/description/
+problem:
+Given an array nums with n objects colored red, white, or blue, sort them in-place so that objects of the same color are adjacent, with the colors in the order red, white, and blue.
+
+We will use the integers 0, 1, and 2 to represent the color red, white, and blue, respectively.
+
+You must solve this problem without using the library's sort function.
+
+ 
+
+Example 1:
+
+Input: nums = [2,0,2,1,1,0]
+Output: [0,0,1,1,2,2]
+Example 2:
+
+Input: nums = [2,0,1]
+Output: [0,1,2]
+ 
+
+Constraints:
+
+n == nums.length
+1 <= n <= 300
+nums[i] is either 0, 1, or 2.
+
+
+solution:
+class Solution {
+    public void sortColors(int[] nums) {
+        int low = 0;
+        int mid = 0;
+        int high = nums.length - 1;
+
+        while (mid <= high) {
+            switch (nums[mid]) {
+                case 0: // Swap with 'low' and move forward
+                    swap(nums, low, mid);
+                    low++;
+                    mid++;
+                    break;
+                case 1: // Current element is in place, just move forward
+                    mid++;
+                    break;
+                case 2: // Swap with 'high' and move backward (don't increment mid)
+                    swap(nums, mid, high);
+                    high--;
+                    break;
+            }
+        }
+    }
+
+    // Helper function to swap elements
+    private void swap(int[] nums, int i, int j) {
+        int temp = nums[i];
+        nums[i] = nums[j];
+        nums[j] = temp;
+    }
+}
+
+explaination:
+Explanation:
+
+Three Pointers: We maintain three pointers/indices:
+
+low: Marks the end of the sorted '0' section.
+mid: Iterates through the unsorted part of the array.
+high: Marks the beginning of the sorted '2' section.
+Iteration and Swapping: The mid pointer moves through the array. We have three cases:
+
+Case 0: If nums[mid] == 0, swap it with nums[low] and increment both low and mid.
+Case 1: If nums[mid] == 1, simply increment mid.
+Case 2: If nums[mid] == 2, swap it with nums[high] and decrement high. Note that we don't increment mid in this case as the swapped element might need processing.
+Why it works: The algorithm ensures that at every iteration, all elements before low are 0s, all elements between low and mid are 1s, and all elements after high are 2s.
+
+##################################################################
+
+url:https://leetcode.com/problems/trapping-rain-water/
+problem:
+Given n non-negative integers representing an elevation map where the width of each bar is 1, compute how much water it can trap after raining.
+
+ 
+
+Example 1:
+
+
+Input: height = [0,1,0,2,1,0,1,3,2,1,2,1]
+Output: 6
+Explanation: The above elevation map (black section) is represented by array [0,1,0,2,1,0,1,3,2,1,2,1]. In this case, 6 units of rain water (blue section) are being trapped.
+Example 2:
+
+Input: height = [4,2,0,3,2,5]
+Output: 9
+ 
+
+Constraints:
+
+n == height.length
+1 <= n <= 2 * 104
+0 <= height[i] <= 105
+
+solution:
+Approach 1: Dynamic Programming (Precalculate Max Heights)
+
+Preprocessing: Calculate two auxiliary arrays:
+leftMax: leftMax[i] stores the maximum height to the left of the current position i (including itself).
+rightMax: rightMax[i] stores the maximum height to the right of the current position i (including itself).
+Water Calculation: Iterate through the height array. For each position i:
+The potential water at i is limited by the smaller of leftMax[i] and rightMax[i].
+Subtract the actual height of the bar (height[i]) to determine the trapped water.
+Add this trapped water to the total.
+Solution Code:
+
+Java
+
+Explain
+class Solution {
+    public int trap(int[] height) {
+        int n = height.length;
+        int[] leftMax = new int[n];
+        int[] rightMax = new int[n];
+        int trappedWater = 0;
+
+        // Calculate leftMax
+        leftMax[0] = height[0];
+        for (int i = 1; i < n; i++) {
+            leftMax[i] = Math.max(leftMax[i - 1], height[i]);
+        }
+
+        // Calculate rightMax
+        rightMax[n - 1] = height[n - 1];
+        for (int i = n - 2; i >= 0; i--) {
+            rightMax[i] = Math.max(rightMax[i + 1], height[i]);
+        }
+
+        // Calculate trapped water 
+        for (int i = 0; i < n; i++) {
+            trappedWater += Math.min(leftMax[i], rightMax[i]) - height[i];
+        }
+
+        return trappedWater;
+    }
+}
+Use code with caution.
+Approach 2: Two Pointers
+
+Initialization:
+left pointer starts at index 0.
+right pointer starts at the last index.
+leftMax and rightMax to track maximum heights seen so far.
+Iteration: While left < right:
+If height[left] is smaller than height[right]:
+Update leftMax if necessary.
+Calculate potential water: min(leftMax, rightMax) - height[left]
+Add potential water to trappedWater and move left forward.
+Else:
+Update rightMax if necessary.
+Calculate potential water: min(leftMax, rightMax) - height[right]
+Add potential water to trappedWater and move right backward.
+Solution Code:
+
+Java
+
+Explain
+class Solution {
+    public int trap(int[] height) {
+        int left = 0, right = height.length - 1;
+        int leftMax = 0, rightMax = 0;
+        int trappedWater = 0;
+
+        while (left < right) {
+            if (height[left] < height[right]) {
+                leftMax = Math.max(leftMax, height[left]);
+                trappedWater += leftMax - height[left];
+                left++;
+            } else {
+                rightMax = Math.max(rightMax, height[right]);
+                trappedWater += rightMax - height[right];
+                right--;
+            }
+        }
+
+        return trappedWater;
+    }
+}
+
+
+
+###################################################
+
+url:https://leetcode.com/problems/3sum/description/
+problem:
+problem:
+Given an integer array nums, return all the triplets [nums[i], nums[j], nums[k]] such that i != j, i != k, and j != k, and nums[i] + nums[j] + nums[k] == 0.
+Notice that the solution set must not contain duplicate triplets.
+ 
+Example 1:
+Input: nums = [-1,0,1,2,-1,-4]
+Output: [[-1,-1,2],[-1,0,1]]
+Explanation: 
+nums[0] + nums[1] + nums[2] = (-1) + 0 + 1 = 0.
+nums[1] + nums[2] + nums[4] = 0 + 1 + (-1) = 0.
+nums[0] + nums[3] + nums[4] = (-1) + 2 + (-1) = 0.
+The distinct triplets are [-1,0,1] and [-1,-1,2].
+Notice that the order of the output and the order of the triplets does not matter.
+Example 2:
+Input: nums = [0,1,1]
+Output: []
+Explanation: The only possible triplet does not sum up to 0.
+Example 3:
+Input: nums = [0,0,0]
+Output: [[0,0,0]]
+Explanation: The only possible triplet sums up to 0.
+ 
+Constraints:
+3 <= nums.length <= 3000
+-105 <= nums[i] <= 105
+
+complete this to solve the problem:
+class Solution {
+    public List<List<Integer>> threeSum(int[] nums) {
+        
+    }
+}
+
+
+solution:
+class Solution {
+    public List<List<Integer>> threeSum(int[] nums) {
+        List<List<Integer>> result = new ArrayList<>();
+        int n = nums.length;
+
+        // Sort the array (important for avoiding duplicates)
+        Arrays.sort(nums);
+
+        for (int i = 0; i < n - 2; i++) {
+            if (i > 0 && nums[i] == nums[i - 1]) { 
+                continue; // Skip duplicates
+            }
+
+            int left = i + 1;
+            int right = n - 1;
+
+            while (left < right) {
+                int currentSum = nums[i] + nums[left] + nums[right];
+
+                if (currentSum == 0) {
+                    result.add(Arrays.asList(nums[i], nums[left], nums[right]));
+                    left++; 
+                    right--;
+
+                    // Skip duplicates on both left and right
+                    while (left < right && nums[left] == nums[left - 1]) left++;
+                    while (left < right && nums[right] == nums[right + 1]) right--; 
+
+                } else if (currentSum < 0) {
+                    left++;
+                } else {
+                    right--;
+                }
+            }
+        }
+        return result;
+    }
+}
+Approach:
+
+Sort the Array:  Sorting the input array helps us avoid duplicates and makes searching for pairs easier.
+
+Iterate and Fix One Element:
+
+Iterate through the array. For each element nums[i], it becomes the fixed element for finding the pairs that would sum up to the target (where the target is -nums[i]).
+Two Pointers for Pair Search:
+
+Initialize two pointers, left at i + 1 and right at the end of the array.
+Finding Pairs:
+
+While left < right:
+Calculate the sum: currentSum = nums[i] + nums[left] + nums[right]
+If currentSum == 0: You have found a triplet. Add it to the result list (avoiding duplicates) and move both pointers closer (left++, right--).
+If currentSum < 0: The sum is too small, so increment left to potentially get a larger sum.
+If currentSum > 0: The sum is too large, so decrement right to potentially get a smaller sum.
+Key Points:
+
+Sorting: Critical for duplicate avoidance and pair searching efficiency.
+Duplicate Handling: Skipping duplicates during the outer loop and within the pair-finding loop ensures unique triplets.
+Time Complexity: O(N^2) due to the nested loops.
+
+###################################
+
+url:https://leetcode.com/problems/4sum/submissions/1177783484/
+problem:Given an array nums of n integers, return an array of all the unique quadruplets [nums[a], nums[b], nums[c], nums[d]] such that:
+
+0 <= a, b, c, d < n
+a, b, c, and d are distinct.
+nums[a] + nums[b] + nums[c] + nums[d] == target
+You may return the answer in any order.
+
+ 
+
+Example 1:
+
+Input: nums = [1,0,-1,0,-2,2], target = 0
+Output: [[-2,-1,1,2],[-2,0,0,2],[-1,0,0,1]]
+Example 2:
+
+Input: nums = [2,2,2,2,2], target = 8
+Output: [[2,2,2,2]]
+ 
+
+Constraints:
+
+1 <= nums.length <= 200
+-109 <= nums[i] <= 109
+-109 <= target <= 109
+
+solution:
+class Solution {
+    public List<List<Integer>> fourSum(int[] nums, int target) {
+        List<List<Integer>> result = new ArrayList<>();
+        int n = nums.length;
+
+        Arrays.sort(nums);
+
+        for (int i = 0; i < n - 3; i++) {
+            if (i > 0 && nums[i] == nums[i - 1]) continue; 
+
+            for (int j = i + 1; j < n - 2; j++) {
+                if (j > i + 1 && nums[j] == nums[j - 1]) continue; 
+
+                int left = j + 1;
+                int right = n - 1;
+
+                while (left < right) {
+                    // Change to long to prevent overflow
+                    long currentSum = (long) nums[i] + nums[j] + nums[left] + nums[right]; 
+                    if (currentSum == target) {
+                        result.add(Arrays.asList(nums[i], nums[j], nums[left], nums[right]));
+                        left++;
+                        right--;
+
+                        while (left < right && nums[left] == nums[left - 1]) left++;
+                        while (left < right && nums[right] == nums[right + 1]) right--;
+
+                    } else if (currentSum < target) {
+                        left++;
+                    } else {
+                        right--;
+                    }
+                }
+            }
+        }
+
+        return result;
+    }
+}
+
+Problem: Given an array of integers (nums) and a target value, find all unique quadruplets in the array that add up to the target.
+
+Approach:
+
+The code employs a combination of sorting, a two-pointer technique, and careful duplicate handling to efficiently find 4Sum combinations. Here's a breakdown:
+
+Sorting:
+
+Arrays.sort(nums): Sorting the input array is crucial for the subsequent steps, allowing efficient searching and elimination of duplicates.
+Fixing Two Elements (Outer Loops):
+
+The outer for loop iterates with index i. The element nums[i] becomes the first fixed number of a potential quadruplet.
+Inner for loop iterates with index j, fixing the second number nums[j].
+Duplicate Handling: The if conditions within both outer loops ensure that if we've already seen a certain nums[i] or nums[j], we skip them. This prevents creating duplicate quadruplets.
+Two-Pointer Search:
+
+left pointer is initialized to j + 1, and the right pointer to the end of the array (n - 1).
+Goal: The goal is to find two numbers within the remaining subarray that, along with nums[i] and nums[j], add up to the target.
+Finding Quadruplets (while loop):
+
+currentSum: Calculate the sum of the four elements (nums[i], nums[j], nums[left], nums[right]).
+
+Case 1 (Found a Match):
+
+If currentSum == target, we have a quadruplet! Add it to the result list.
+Move left and right pointers inward (left++, right--).
+Prevent Duplicates: The inner while loops keep moving left and right pointers as long as there are duplicates of adjacent values, ensuring unique results.
+Case 2 (Sum too small):
+
+If currentSum < target, we need a larger sum, so move the left pointer inward (left++).
+Case 3 (Sum too large):
+If currentSum > target, we need a smaller sum, so move the right pointer inward (right--).
+
+Key Points:
+
+Sorting: Essential for both duplicate prevention and efficient two-pointer search.
+Duplicate Handling: Duplicate checks at each level keep the result list unique.
+Time Complexity: O(N^3) due to the three nested loops.
+
+#####################################################
+
+url: https://leetcode.com/problems/remove-duplicates-from-sorted-array-ii/description/
+problem:
+Given an integer array nums sorted in non-decreasing order, remove some duplicates in-place such that each unique element appears at most twice. The relative order of the elements should be kept the same.
+
+Since it is impossible to change the length of the array in some languages, you must instead have the result be placed in the first part of the array nums. More formally, if there are k elements after removing the duplicates, then the first k elements of nums should hold the final result. It does not matter what you leave beyond the first k elements.
+
+Return k after placing the final result in the first k slots of nums.
+
+Do not allocate extra space for another array. You must do this by modifying the input array in-place with O(1) extra memory.
+
+Custom Judge:
+
+The judge will test your solution with the following code:
+
+int[] nums = [...]; // Input array
+int[] expectedNums = [...]; // The expected answer with correct length
+
+int k = removeDuplicates(nums); // Calls your implementation
+
+assert k == expectedNums.length;
+for (int i = 0; i < k; i++) {
+    assert nums[i] == expectedNums[i];
+}
+If all assertions pass, then your solution will be accepted.
+
+ 
+
+Example 1:
+
+Input: nums = [1,1,1,2,2,3]
+Output: 5, nums = [1,1,2,2,3,_]
+Explanation: Your function should return k = 5, with the first five elements of nums being 1, 1, 2, 2 and 3 respectively.
+It does not matter what you leave beyond the returned k (hence they are underscores).
+Example 2:
+
+Input: nums = [0,0,1,1,1,1,2,3,3]
+Output: 7, nums = [0,0,1,1,2,3,3,_,_]
+Explanation: Your function should return k = 7, with the first seven elements of nums being 0, 0, 1, 1, 2, 3 and 3 respectively.
+It does not matter what you leave beyond the returned k (hence they are underscores).
+ 
+
+Constraints:
+
+1 <= nums.length <= 3 * 104
+-104 <= nums[i] <= 104
+nums is sorted in non-decreasing order.
+
+solution:
+Approach: Using a Slow Pointer
+
+Maintain a Pointer:  Initialize a pointer (slow) set to 0. This pointer marks the end of the modified section of the array (containing unique elements up to two times).
+
+Count for Repetition: Introduce a count variable to track how many times an element has already appeared.
+
+Iteration:
+
+Iterate through the nums array using a fast pointer.
+Logic:
+
+If the current element (nums[fast]) is different from the element at the slow - 1 position (ensuring at least one duplicate is allowed):
+Move this distinct element to the slow position in the array.
+Increment slow.
+Reset count to 1 (as we've found a new distinct element).
+Else if count < 2 (the current element is the same, but appears less than twice):
+Move the element to the slow position in the array.
+Increment slow.
+Increment count.
+Else (the current element has already appeared twice) do nothing.
+Code Implementation:
+
+Java
+
+Explain
+class Solution {
+    public int removeDuplicates(int[] nums) {
+        if (nums.length <= 2) return nums.length; 
+
+        int slow = 1; //  Start from index 1 as the first element can always be included 
+        int count = 1; 
+
+        for (int fast = 1; fast < nums.length; fast++) {
+            if (nums[fast] != nums[slow - 1]) { 
+                nums[slow] = nums[fast]; 
+                slow++;
+                count = 1; // Reset count
+            } else if (count < 2) {
+                nums[slow] = nums[fast];
+                slow++;
+                count++;
+            } 
+        }
+        return slow; 
+    }
+}
+Use code with caution.
+Explanation:
+
+Base Case: If the array length is less than or equal to 2, no modification is needed.
+Pointers:
+slow: Points to the next position where a unique element (or a second occurrence) should be placed.
+fast: iterates through the array.
+Logic: The if conditions ensure elements are either new or appear for the second time consecutively. The remaining elements that have already appeared more than twice are ignored.
+Return Value: The slow index is returned, which represents the length (k) of the modified array portion.
+Key Points:
+
+In-place Modification: No extra arrays are used.
+O(1) Extra Space: The algorithm uses only a few variables.
+Handles Sorted Requirement: The approach takes advantage of the input array being sorted.
+
+
+
+#################################################
+
+url:https://leetcode.com/problems/rotate-list/
+problem:
+Given the head of a linked list, rotate the list to the right by k places.
+
+ 
+
+Example 1:
+
+
+Input: head = [1,2,3,4,5], k = 2
+Output: [4,5,1,2,3]
+Example 2:
+
+
+Input: head = [0,1,2], k = 4
+Output: [2,0,1]
+ 
+
+Constraints:
+
+The number of nodes in the list is in the range [0, 500].
+-100 <= Node.val <= 100
+0 <= k <= 2 * 109
+
+solution:
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode() {}
+ *     ListNode(int val) { this.val = val; }
+ *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
+ * }
+ */
+class Solution {
+    public ListNode rotateRight(ListNode head, int k) {
+        // Handle edge cases
+        if (head == null || head.next == null || k == 0) {
+            return head;
+        }
+
+        // Find length and tail
+        int length = 1;
+        ListNode tail = head;
+        while (tail.next != null) {
+            tail = tail.next;
+            length++;
+        }
+
+        // Circularize the list
+        tail.next = head; 
+
+        // Find the new tail 
+        k = k % length; // Handle if k >= length
+        for (int i = 0; i < length - k; i++) {
+            tail = tail.next;
+        }
+
+        // Break the cycle and set new head
+        ListNode newHead = tail.next; 
+        tail.next = null;
+
+        return newHead; 
+    }
+}
+
+
+Approach
+
+Handle Edge Cases: Check if the linked list is empty (null head) or if k is zero (no rotation needed).
+
+Find the Length and Tail:
+
+Iterate through the list to find its length and the tail node (the last node).
+Circularize: Connect the tail node to the head, effectively creating a cycle.
+
+Find the New Tail:
+
+Calculate the position of the new tail: length - (k % length). Note that using the modulo operator (%) accommodates cases where k might be larger than the list's length, performing multiple rotations if necessary.
+Move a pointer to this new tail node.
+Break and Set New Head:
+
+Break the link between the new tail and the new head (newTail.next = null).
+Set the newHead as the element after the newTail.
+Explanation:
+
+Edge Cases: Ensures correct behavior for empty lists or a rotation count of zero.
+Efficiency: k % length optimizes to ensure we only rotate as necessary based on the list's length.
+Clarity: Uses clear variable names for readability.
+
+
+
+#####################################################################
+
+
+url:https://leetcode.com/problems/reorder-list/description/
+
+problem:
+You are given the head of a singly linked-list. The list can be represented as:
+
+L0 → L1 → … → Ln - 1 → Ln
+Reorder the list to be on the following form:
+
+L0 → Ln → L1 → Ln - 1 → L2 → Ln - 2 → …
+You may not modify the values in the list's nodes. Only nodes themselves may be changed.
+
+ 
+
+Example 1:
+
+
+Input: head = [1,2,3,4]
+Output: [1,4,2,3]
+Example 2:
+
+
+Input: head = [1,2,3,4,5]
+Output: [1,5,2,4,3]
+ 
+
+Constraints:
+
+The number of nodes in the list is in the range [1, 5 * 104].
+1 <= Node.val <= 1000
+
+
+solution:
+/**
+ * Definition for singly-linked list.
+ * public class ListNode {
+ *     int val;
+ *     ListNode next;
+ *     ListNode() {}
+ *     ListNode(int val) { this.val = val; }
+ *     ListNode(int val, ListNode next) { this.val = val; this.next = next; }
+ * }
+ */
+class Solution {
+    public void reorderList(ListNode head) {
+        if (head == null || head.next == null) return;  // Base case 
+
+        // 1. Find the middle node 
+        ListNode slow = head, fast = head;
+        while (fast.next != null && fast.next.next != null) {
+            slow = slow.next;
+            fast = fast.next.next;
+        }
+
+        // 2. Reverse the second half of the list
+        ListNode secondHalfHead = reverseList(slow.next); 
+        slow.next = null; // Break the list into two halves 
+
+        // 3. Merge the two halves 
+        ListNode first = head;
+        ListNode second = secondHalfHead;
+        while (second != null) {
+            ListNode temp1 = first.next; 
+            ListNode temp2 = second.next; 
+
+            first.next = second; 
+            second.next = temp1; 
+
+            first = temp1;
+            second = temp2;
+        }
+    }
+
+    // Helper function to reverse a linked list
+    private ListNode reverseList(ListNode head) {
+        ListNode prev = null;
+        while (head != null) {
+            ListNode next = head.next;
+            head.next = prev;
+            prev = head;
+            head = next;
+        }
+        return prev;
+    }
+}
+
+
+Approach:
+
+Find the Middle: Use the slow and fast pointer technique to find the middle node of the linked list.
+Reverse the Second Half: Reverse the second half of the linked list in place.
+Merge the Halves: Merge the first half and the reversed second half in an alternating fashion.
+Explanation:
+
+Base Case: Handles an empty or single-node list.
+Find the Middle: The slow pointer will reach the middle of the linked list.
+Reverse the Second Half: The reverseList helper function reverses the list starting from the middle node.
+Merge the Halves: We alternate nodes from the first and the reversed second half to achieve the desired reordering.
+Key Points:
+
+In-Place Modification: Achieves the reordering using pointer manipulation instead of modifying node values.
+Helper Function: Keeps the implementation well-organized with a separate function for reversing a portion of the list.
+
